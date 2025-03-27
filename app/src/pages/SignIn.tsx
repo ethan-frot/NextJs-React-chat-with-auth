@@ -1,8 +1,8 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import AuthForm from "../components/AuthForm";
-import { AuthFormData } from "../services/authService";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import AuthForm from '../components/AuthForm';
+import { AuthFormData } from '../services/authService';
 
 export default function SignIn() {
   const { signIn } = useAuth();
@@ -10,7 +10,7 @@ export default function SignIn() {
 
   const handleSubmit = async (data: AuthFormData) => {
     await signIn(data);
-    navigate("/");
+    navigate('/');
   };
 
   return (

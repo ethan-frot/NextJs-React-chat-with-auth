@@ -3,13 +3,13 @@ import {
   Routes,
   Route,
   Navigate,
-} from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "./contexts/AuthContext";
-import Chat from "./pages/Chat";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import "./App.css";
+} from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
+import Chat from './pages/Chat';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import './App.css';
 
 const queryClient = new QueryClient();
 

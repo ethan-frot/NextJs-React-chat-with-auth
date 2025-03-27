@@ -1,8 +1,8 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { Button } from "../ui/button";
-import { LogIn } from "lucide-react";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { Button } from '../ui/button';
+import { LogIn } from 'lucide-react';
 
 const UserInfo: React.FC = () => {
   const { user } = useAuth();
@@ -11,7 +11,7 @@ const UserInfo: React.FC = () => {
   if (!user) {
     return (
       <Button
-        onClick={() => navigate("/signin")}
+        onClick={() => navigate('/signin')}
         className="w-full cursor-pointer"
       >
         <LogIn />

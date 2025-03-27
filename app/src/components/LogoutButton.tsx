@@ -1,7 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import { Button } from "./ui/button";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from './ui/button';
 
 const LogoutButton: React.FC = () => {
   const { signOut, user } = useAuth();
@@ -9,7 +9,7 @@ const LogoutButton: React.FC = () => {
 
   const handleLogout = () => {
     signOut();
-    navigate("/signin");
+    navigate('/signin');
   };
 
   if (!user) return null;

@@ -1,7 +1,7 @@
-import axios from "axios";
-import { authService } from "./authService";
+import axios from 'axios';
+import { authService } from './authService';
 
-const API_URL = "http://localhost:8000/api/messages";
+const API_URL = 'http://localhost:8000/api/messages';
 
 export interface Message {
   id: string;
@@ -30,7 +30,6 @@ export const messageService = {
 
   async findAll(): Promise<Message[]> {
     const response = await axios.get(API_URL);
-    console.log(response.data);
     return response.data;
   },
 

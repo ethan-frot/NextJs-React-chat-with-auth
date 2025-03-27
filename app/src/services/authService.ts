@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_URL = "http://localhost:8000/api";
+const API_URL = 'http://localhost:8000/api';
 
 export interface AuthFormData {
   email: string;
@@ -22,14 +22,13 @@ export interface User {
 }
 
 class AuthService {
-  private readonly TOKEN_KEY = "access_token";
+  private readonly TOKEN_KEY = 'access_token';
 
   async signIn(data: AuthFormData): Promise<AuthResponse> {
     const response = await axios.post(`${API_URL}/auth/signin`, {
       email: data.email,
       password: data.password,
     });
-    console.log(response.data);
     this.setToken(response.data.access_token);
     return response.data;
   }
@@ -45,12 +44,12 @@ class AuthService {
 
   setToken(token: string) {
     localStorage.setItem(this.TOKEN_KEY, token);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 
   removeToken() {
     localStorage.removeItem(this.TOKEN_KEY);
-    delete axios.defaults.headers.common["Authorization"];
+    delete axios.defaults.headers.common['Authorization'];
   }
 
   getToken(): string | null {
@@ -60,7 +59,7 @@ class AuthService {
   async getCurrentUser(): Promise<User> {
     const token = this.getToken();
     if (!token) {
-      throw new Error("No token found");
+      throw new Error('No token found');
     }
 
     const response = await axios.get<User>(`${API_URL}/auth/profile`, {

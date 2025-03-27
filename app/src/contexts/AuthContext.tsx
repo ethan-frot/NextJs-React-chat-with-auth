@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { authService, User, AuthFormData } from "../services/authService";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService, User, AuthFormData } from '../services/authService';
 
 interface AuthContextType {
   user: User | null;
@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           const userData = await authService.getCurrentUser();
           setUser(userData);
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error('Error fetching user data:', error);
           authService.removeToken();
         }
       }
@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

@@ -1,10 +1,9 @@
-version: '3.1'
 services:
   adminer:
     image: adminer
     container_name: adminer-worktransfer
     environment:
-      ADMINER_DESIGN: pepa-linha
+      ADMINER_DESIGN: dracula
       ADMINER_DEFAULT_SERVER: database
     ports:
       - 8080:8080

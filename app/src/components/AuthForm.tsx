@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import { AuthFormData } from "../services/authService";
-import { Button } from "./ui/button";
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import { AuthFormData } from '../services/authService';
+import { Button } from './ui/button';
 
 interface AuthFormProps {
   title: string;
@@ -36,11 +36,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
       setError(null);
       await onSubmit(data);
     } catch (err) {
-      console.error("Authentication error:", err);
+      console.error('Authentication error:', err);
       setError(
         err instanceof Error
           ? err.message
-          : "Une erreur est survenue lors de l'authentification"
+          : "Une erreur est survenue lors de l'authentification",
       );
     } finally {
       setIsLoading(false);
@@ -68,11 +68,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
               <input
                 id="email"
                 autoComplete="email"
-                {...register("email", {
+                {...register('email', {
                   required: "L'email est requis",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Adresse email invalide",
+                    message: 'Adresse email invalide',
                   },
                 })}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-2"
@@ -99,14 +99,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 id="password"
                 type="password"
                 autoComplete={
-                  redirectTo === "/signin" ? "new-password" : "current-password"
+                  redirectTo === '/signin' ? 'new-password' : 'current-password'
                 }
-                {...register("password", {
-                  required: "Le mot de passe est requis",
+                {...register('password', {
+                  required: 'Le mot de passe est requis',
                   minLength: {
                     value: 6,
                     message:
-                      "Le mot de passe doit contenir au moins 6 caractères",
+                      'Le mot de passe doit contenir au moins 6 caractères',
                   },
                 })}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-2"
@@ -132,13 +132,13 @@ const AuthForm: React.FC<AuthFormProps> = ({
               variant="default"
               className="w-full cursor-pointer"
             >
-              {isLoading ? "Chargement..." : submitButtonText}
+              {isLoading ? 'Chargement...' : submitButtonText}
             </Button>
           </div>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
-          {redirectText}{" "}
+          {redirectText}{' '}
           <Link
             to={redirectTo}
             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"

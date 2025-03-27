@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { messageService, Message } from "../../services/messageService";
+import React, { useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { messageService, Message } from '@/services/messageService.ts';
 
 const MessageList: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -9,12 +9,12 @@ const MessageList: React.FC = () => {
     isLoading,
     error,
   } = useQuery<Message[]>({
-    queryKey: ["messages"],
+    queryKey: ['messages'],
     queryFn: () => messageService.findAll(),
   });
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {

@@ -1,8 +1,8 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import AuthForm from "../components/AuthForm";
-import { AuthFormData } from "../services/authService";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import AuthForm from '../components/AuthForm';
+import { AuthFormData } from '../services/authService';
 
 export default function SignUp() {
   const { signUp } = useAuth();
@@ -10,7 +10,7 @@ export default function SignUp() {
 
   const handleSubmit = async (data: AuthFormData) => {
     await signUp(data);
-    navigate("/");
+    navigate('/');
   };
 
   return (

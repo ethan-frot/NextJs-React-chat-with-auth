@@ -19,14 +19,14 @@ const MessageForm: React.FC = () => {
       setSocket(socket);
     });
 
-    socket.on('messageFromBack', (message: string) => {
-      console.log('Message from server:', message);
+    socket.on('messageFromBack', () => {
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
     });
 
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [queryClient]);
 
   const allowToSend = messageText.trim() !== '';
 
@@ -35,13 +35,13 @@ const MessageForm: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
       reset();
+      if (!socket) return;
+      socket.emit('messageFromFront', "newMessage");
     },
   });
 
   const onSubmit = (data: CreateMessageDto) => {
     mutation.mutate(data);
-    if (!socket) return;
-    socket.emit('messageFromFront', data);
   };
 
   return (

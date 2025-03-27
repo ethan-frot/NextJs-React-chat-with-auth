@@ -10,7 +10,10 @@ const MessageList: React.FC = () => {
     error,
   } = useQuery<Message[]>({
     queryKey: ['messages'],
-    queryFn: () => messageService.findAll(),
+    queryFn: () => {
+      console.log('fetching messages');
+      return messageService.findAll();
+    },
   });
 
   const scrollToBottom = () => {

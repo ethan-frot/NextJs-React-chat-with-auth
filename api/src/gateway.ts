@@ -35,6 +35,30 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
+  @SubscribeMessage('register')
+  handleRegister(
+    client: Socket,
+    payload: { userId: string; email: string },
+  ): void {
+    if (!client.id) return;
+
+    const user = this.connectedUsersBySocketId.get(client.id);
+    if (user) {
+      const updatedUser = {
+        ...user,
+        userId: payload.userId,
+        email: payload.email,
+        lastSeen: new Date(),
+        status: UserStatus.ONLINE,
+      };
+
+      this.connectedUsersBySocketId.set(client.id, updatedUser);
+      this.connectedUsersByUserId.set(payload.userId, updatedUser);
+    }
+
+    this.updateConnectedUsersList();
+  }
+
   handleConnection(client: Socket) {
     if (!client.id) return;
 
@@ -86,28 +110,9 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.updateConnectedUsersList();
   }
 
-  @SubscribeMessage('register')
-  handleRegister(
-    client: Socket,
-    payload: { userId: string; email: string },
-  ): void {
-    if (!client.id) return;
-
-    const user = this.connectedUsersBySocketId.get(client.id);
-    if (user) {
-      const updatedUser = {
-        ...user,
-        userId: payload.userId,
-        email: payload.email,
-        lastSeen: new Date(),
-        status: UserStatus.ONLINE,
-      };
-
-      this.connectedUsersBySocketId.set(client.id, updatedUser);
-      this.connectedUsersByUserId.set(payload.userId, updatedUser);
-    }
-
-    this.updateConnectedUsersList();
+  @SubscribeMessage('messageLiked')
+  handleMessageLiked(payload: { messageId: string }): void {
+    this.server.emit('messageLiked', payload.messageId);
   }
 
   private updateConnectedUsersList(): void {

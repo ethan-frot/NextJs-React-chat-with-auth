@@ -27,7 +27,7 @@ export class MessagesService {
 
   findAll(): Promise<Message[]> {
     return this.messagesRepository.find({
-      relations: ['user'],
+      relations: ['user', 'likedBy'],
       order: {
         createdAt: 'ASC',
       },
@@ -37,7 +37,7 @@ export class MessagesService {
   async findOne(id: string): Promise<Message> {
     const message = await this.messagesRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'likedBy'],
     });
     if (!message) {
       throw new NotFoundException(`Message with ID ${id} not found`);
@@ -55,5 +55,40 @@ export class MessagesService {
 
   async remove(id: string): Promise<void> {
     await this.messagesRepository.softDelete(id);
+  }
+
+  async likeMessage(messageId: string, userId: string): Promise<Message> {
+    const message = await this.findOne(messageId);
+    const user = await this.usersService.findOne(userId);
+
+    if (!message.likedBy) {
+      message.likedBy = [];
+    }
+
+    const hasLiked = message.likedBy.some((like) => like.id === userId);
+    if (!hasLiked) {
+      message.likedBy.push(user);
+      message.likesCount = (message.likesCount || 0) + 1;
+      await this.messagesRepository.save(message);
+    }
+
+    return this.findOne(messageId);
+  }
+
+  async unlikeMessage(messageId: string, userId: string): Promise<Message> {
+    const message = await this.findOne(messageId);
+
+    if (!message.likedBy) {
+      message.likedBy = [];
+    }
+
+    const hasLiked = message.likedBy.some((like) => like.id === userId);
+    if (hasLiked) {
+      message.likedBy = message.likedBy.filter((like) => like.id !== userId);
+      message.likesCount = Math.max(0, (message.likesCount || 0) - 1);
+      await this.messagesRepository.save(message);
+    }
+
+    return this.findOne(messageId);
   }
 }

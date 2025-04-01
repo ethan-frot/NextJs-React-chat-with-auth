@@ -64,10 +64,24 @@ const MessageList: React.FC = () => {
             });
         };
 
+        const handleNewMessage = () => {
+            queryClient.invalidateQueries({queryKey: ['messages']});
+        };
+
+        const handleMessageFromBack = () => {
+            queryClient.invalidateQueries({queryKey: ['messages']});
+        };
+
         socket.on('messageLiked', handleMessageLiked);
+        socket.on('messageCreated', handleNewMessage);
+        socket.on('messageFromBack', handleMessageFromBack);
+        socket.on('message', handleMessageFromBack);
 
         return () => {
             socket.off('messageLiked', handleMessageLiked);
+            socket.off('messageCreated', handleNewMessage);
+            socket.off('messageFromBack', handleMessageFromBack);
+            socket.off('message', handleMessageFromBack);
         };
     }, [socket, queryClient]);
 

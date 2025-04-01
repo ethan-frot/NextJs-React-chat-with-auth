@@ -36,6 +36,34 @@ const MessageList: React.FC = () => {
         },
     });
 
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleMessageLiked = (data: {
+            messageId: string;
+            likesCount: number;
+        }) => {
+            queryClient.setQueryData<Message[]>(['messages'], (oldMessages) => {
+                if (!oldMessages) return oldMessages;
+                return oldMessages.map((message) => {
+                    if (message.id === data.messageId) {
+                        return {
+                            ...message,
+                            likesCount: data.likesCount,
+                        };
+                    }
+                    return message;
+                });
+            });
+        };
+
+        socket.on('messageLiked', handleMessageLiked);
+
+        return () => {
+            socket.off('messageLiked', handleMessageLiked);
+        };
+    }, [socket, queryClient]);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
     };

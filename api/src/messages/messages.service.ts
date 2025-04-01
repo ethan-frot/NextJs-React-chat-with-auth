@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UsersService } from '../users/users.service';
+import { Gateway } from '../gateway';
 
 @Injectable()
 export class MessagesService {
@@ -11,6 +12,7 @@ export class MessagesService {
     @InjectRepository(Message)
     private messagesRepository: Repository<Message>,
     private usersService: UsersService,
+    private gateway: Gateway,
   ) {}
 
   async create(
@@ -22,7 +24,9 @@ export class MessagesService {
       ...createMessageDto,
       user,
     });
-    return this.messagesRepository.save(message);
+    const savedMessage = await this.messagesRepository.save(message);
+    this.gateway.server.emit('messageFromBack', 'newMessage');
+    return savedMessage;
   }
 
   findAll(): Promise<Message[]> {
@@ -70,6 +74,10 @@ export class MessagesService {
       message.likedBy.push(user);
       message.likesCount = (message.likesCount || 0) + 1;
       await this.messagesRepository.save(message);
+      this.gateway.server.emit('messageLiked', {
+        messageId,
+        likesCount: message.likesCount,
+      });
     }
 
     return this.findOne(messageId);
@@ -87,6 +95,10 @@ export class MessagesService {
       message.likedBy = message.likedBy.filter((like) => like.id !== userId);
       message.likesCount = Math.max(0, (message.likesCount || 0) - 1);
       await this.messagesRepository.save(message);
+      this.gateway.server.emit('messageLiked', {
+        messageId,
+        likesCount: message.likesCount,
+      });
     }
 
     return this.findOne(messageId);

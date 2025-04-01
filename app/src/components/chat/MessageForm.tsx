@@ -36,7 +36,7 @@ const MessageForm: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
       reset();
       if (!socket) return;
-      socket.emit('messageFromFront', "newMessage");
+      socket.emit('message', "newMessage");
     },
   });
 

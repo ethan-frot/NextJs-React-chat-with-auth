@@ -1,24 +1,21 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Button } from './ui/button';
+import {useAuth} from '../contexts/AuthContext';
+import {Button} from './ui/button';
+import {LogOut} from 'lucide-react';
 
-const LogoutButton: React.FC = () => {
-  const { signOut, user } = useAuth();
-  const navigate = useNavigate();
+const LogoutButton = () => {
+    const {signOut} = useAuth();
 
-  const handleLogout = () => {
-    signOut();
-    navigate('/signin');
-  };
-
-  if (!user) return null;
-
-  return (
-    <Button onClick={handleLogout} variant="ghost" className="cursor-pointer">
-      Déconnexion
-    </Button>
-  );
+    return (
+        <Button
+            onClick={signOut}
+            variant="ghost"
+            className="w-full text-gray-100 hover:bg-[#27242C] justify-start"
+            size="sm"
+        >
+            <LogOut className="mr-2 h-4 w-4"/>
+            <span>Déconnexion</span>
+        </Button>
+    );
 };
 
 export default LogoutButton;

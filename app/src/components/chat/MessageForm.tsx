@@ -1,76 +1,128 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { messageService, CreateMessageDto } from '@/services/messageService';
-import { SendHorizontal } from 'lucide-react';
-import { io, Socket } from 'socket.io-client';
+import React, {KeyboardEvent} from 'react';
+import {useForm} from 'react-hook-form';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {messageService, CreateMessageDto} from '@/services/messageService';
+import {
+    SendHorizontal,
+    Plus,
+    Bold,
+    Italic,
+    List,
+    LinkIcon,
+    AtSign,
+    Smile,
+} from 'lucide-react';
+import {useSocket} from '@/contexts/SocketContext';
 
 const MessageForm: React.FC = () => {
-  const { register, handleSubmit, reset, watch } = useForm<CreateMessageDto>();
-  const queryClient = useQueryClient();
-  const messageText = watch('text', '');
-  const [socket, setSocket] = useState<Socket | null>(null);
+    const {register, handleSubmit, reset, watch} = useForm<CreateMessageDto>();
+    const queryClient = useQueryClient();
+    const messageText = watch('text', '');
+    const {socket} = useSocket();
 
-  useEffect(() => {
-    const socket = io('http://localhost:8000');
+    const allowToSend = messageText.trim() !== '';
 
-    socket.on('connect', () => {
-      console.log('Connected to server');
-      setSocket(socket);
+    const mutation = useMutation({
+        mutationFn: (data: CreateMessageDto) => messageService.create(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['messages']});
+            reset();
+            if (!socket) return;
+            socket.emit('message', 'newMessage');
+        },
     });
 
-    socket.on('messageFromBack', () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] });
-    });
-
-    return () => {
-      socket.disconnect();
+    const onSubmit = (data: CreateMessageDto) => {
+        mutation.mutate(data);
     };
-  }, [queryClient]);
 
-  const allowToSend = messageText.trim() !== '';
+    const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        // Envoyer le message lorsque l'utilisateur appuie sur Entrée sans la touche Shift
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (allowToSend) {
+                handleSubmit(onSubmit)();
+            }
+        }
+    };
 
-  const mutation = useMutation({
-    mutationFn: (data: CreateMessageDto) => messageService.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] });
-      reset();
-      if (!socket) return;
-      socket.emit('message', "newMessage");
-    },
-  });
+    return (
+        <div className="rounded-lg border border-[#393939] overflow-hidden">
+            {/* Message input toolbar */}
+            <div className="bg-[#222529] px-3 py-2 flex items-center border-b border-[#393939]">
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <Bold size={16}/>
+                </button>
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <Italic size={16}/>
+                </button>
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <List size={16}/>
+                </button>
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <LinkIcon size={16}/>
+                </button>
+                <div className="h-5 w-px bg-[#393939] mx-2"></div>
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <AtSign size={16}/>
+                </button>
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <Smile size={16}/>
+                </button>
+                <div className="flex-1"></div>
+                <button className="text-[#ABABAD] hover:text-white p-1 rounded hover:bg-[#2c2c2e]">
+                    <Plus size={16}/>
+                </button>
+            </div>
 
-  const onSubmit = (data: CreateMessageDto) => {
-    mutation.mutate(data);
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="relative">
-      <div className="flex gap-2">
-        <input
-          {...register('text', { required: true })}
-          type="text"
-          placeholder="Type your message..."
-          className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            {/* Message input */}
+            <form onSubmit={handleSubmit(onSubmit)} className="relative">
+        <textarea
+            {...register('text', {required: true})}
+            placeholder="Envoyer un message dans #général"
+            className="w-full px-4 py-3 resize-none focus:outline-none bg-[#222529] text-white placeholder-[#6b6f76] leading-5"
+            rows={2}
+            onKeyDown={handleKeyPress}
         />
 
-        <button
-          type="submit"
-          disabled={mutation.isPending || !allowToSend}
-          className={`absolute right-0 top-0 bottom-0 rounded-r-lg bg-indigo-500 px-4 text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 cursor-pointer ${
-            allowToSend ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {mutation.isPending ? 'Sending...' : <SendHorizontal />}
-        </button>
-      </div>
-      {mutation.isError && (
-        <p className="mt-2 text-sm text-red-600">
-          Error sending message. Please try again.
-        </p>
-      )}
-    </form>
-  );
+                <div className="absolute right-2 bottom-2 flex items-center gap-2">
+                    {mutation.isPending ? (
+                        <div className="text-sm text-[#1d9bd1]">Envoi en cours...</div>
+                    ) : (
+                        <button
+                            type="submit"
+                            disabled={!allowToSend}
+                            className={`flex items-center justify-center h-8 w-8 rounded-full ${
+                                allowToSend
+                                    ? 'bg-[#1164A3] text-white hover:bg-[#0b5a92]'
+                                    : 'bg-[#2c2c2e] text-[#6b6f76]'
+                            } transition-colors duration-200`}
+                        >
+                            <SendHorizontal size={16}/>
+                        </button>
+                    )}
+                </div>
+            </form>
+
+            {mutation.isError && (
+                <p className="px-4 py-2 text-sm text-red-400 bg-red-900/20">
+                    Erreur lors de l'envoi du message. Veuillez réessayer.
+                </p>
+            )}
+
+            <div className="px-4 py-2 text-xs text-[#ABABAD] bg-[#222529]">
+                Appuyez sur{' '}
+                <kbd className="px-1.5 py-0.5 bg-[#2c2c2e] rounded border border-[#393939]">
+                    Entrée
+                </kbd>{' '}
+                pour envoyer,{' '}
+                <kbd className="px-1.5 py-0.5 bg-[#2c2c2e] rounded border border-[#393939]">
+                    Maj+Entrée
+                </kbd>{' '}
+                pour sauter une ligne
+            </div>
+        </div>
+    );
 };
 
 export default MessageForm;

@@ -4,6 +4,7 @@ import {messageService, Message} from '@/services/messageService.ts';
 import {Heart} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useSocket} from '@/contexts/SocketContext';
+import {formatMessageDate} from '@/utils/date';
 
 const MessageList: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -122,7 +123,7 @@ const MessageList: React.FC = () => {
                                     <span>{message.likesCount ?? 0}</span>
                                 </button>
                             </div>
-                            <p>{new Date(message.createdAt).toLocaleString()}</p>
+                            <p>{formatMessageDate(message.createdAt.toString())}</p>
                         </div>
                     </div>
                 );

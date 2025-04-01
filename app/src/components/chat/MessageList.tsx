@@ -3,10 +3,12 @@ import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {messageService, Message} from '@/services/messageService.ts';
 import {Heart} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext';
+import {useSocket} from '@/contexts/SocketContext';
 
 const MessageList: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const {user} = useAuth();
+    const {socket} = useSocket();
     const queryClient = useQueryClient();
 
     const {

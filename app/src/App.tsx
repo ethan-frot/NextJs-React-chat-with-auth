@@ -3,80 +3,30 @@ import {
     Routes,
     Route,
     Navigate,
-} from "react-router-dom";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {AuthProvider, useAuth} from "./contexts/AuthContext";
-import Chat from "./pages/Chat";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import "./App.css";
-import React, {createContext, useContext, useEffect, useState} from "react";
-import {io, Socket} from "socket.io-client";
+} from 'react-router-dom';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {AuthProvider} from './contexts/AuthContext';
+import {SocketProvider} from './contexts/SocketContext';
+import Chat from './pages/Chat';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import './App.css';
 
 const queryClient = new QueryClient();
-
-interface SocketContextType {
-    socket: Socket | null;
-}
-
-const SocketContext = createContext<SocketContextType>({socket: null});
-
-export const useSocket = () => useContext(SocketContext);
-
-function SocketProvider({children}: { children: React.ReactNode }) {
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const {user} = useAuth();
-
-    useEffect(() => {
-        const socket = io("http://localhost:8000");
-
-        socket.on("connect", () => {
-            setSocket(socket);
-
-            if (user && user.id) {
-                socket.emit("register", {userId: user.id, email: user.email});
-            }
-        });
-
-        return () => {
-            socket.disconnect();
-        };
-    }, [user]);
-
-    useEffect(() => {
-        if (socket && user && user.id) {
-            socket.emit("register", {userId: user.id, email: user.email});
-        }
-    }, [socket, user]);
-
-    return (
-        <SocketContext.Provider value={{socket}}>
-            {children}
-        </SocketContext.Provider>
-    );
-}
-
-function AppContent() {
-    const {socket} = useSocket();
-
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Chat socket={socket}/>}/>
-                <Route path="/signin" element={<SignIn/>}/>
-                <Route path="/signup" element={<SignUp/>}/>
-                <Route path="*" element={<Navigate to="/" replace/>}/>
-            </Routes>
-        </Router>
-    );
-}
 
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <AuthProvider>
                 <SocketProvider>
-                    <AppContent/>
+                    <Router>
+                        <Routes>
+                            <Route path="/" element={<Chat/>}/>
+                            <Route path="/signin" element={<SignIn/>}/>
+                            <Route path="/signup" element={<SignUp/>}/>
+                            <Route path="*" element={<Navigate to="/" replace/>}/>
+                        </Routes>
+                    </Router>
                 </SocketProvider>
             </AuthProvider>
         </QueryClientProvider>

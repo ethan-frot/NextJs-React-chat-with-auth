@@ -3,15 +3,12 @@ import MessageForm from '../components/chat/MessageForm';
 import MessageList from '../components/chat/MessageList';
 import UserInfo from '../components/chat/UserInfo';
 import LogoutButton from '../components/LogoutButton';
-import OnlineUserList from "@/components/chat/OnlineUserList.tsx";
-import {Socket} from "socket.io-client";
+import OnlineUserList from '@/components/chat/OnlineUserList.tsx';
+import {useSocket} from '@/contexts/SocketContext';
 
-interface ChatProps {
-    socket: Socket | null;
-}
-
-const Chat = ({socket}: ChatProps) => {
+const Chat = () => {
     const {user} = useAuth();
+    const {socket} = useSocket();
 
     return (
         <div className="container mx-auto w-full h-screen">

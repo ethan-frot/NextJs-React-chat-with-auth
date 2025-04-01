@@ -1,7 +1,7 @@
 services:
   adminer:
     image: adminer
-    container_name: adminer-worktransfer
+    container_name: adminer-chatapp
     environment:
       ADMINER_DESIGN: dracula
       ADMINER_DEFAULT_SERVER: database
@@ -9,11 +9,11 @@ services:
       - 8080:8080
   database:
     image: postgres
-    container_name: postgres-worktransfer
+    container_name: postgres-chatapp
     restart: always
     ports:
       - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: test
+      POSTGRES_DB: chatapp

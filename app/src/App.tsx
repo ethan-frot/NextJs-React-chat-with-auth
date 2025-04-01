@@ -10,19 +10,10 @@ import Chat from "./pages/Chat";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import "./App.css";
-import {createContext, useContext, useEffect, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {io, Socket} from "socket.io-client";
 
 const queryClient = new QueryClient();
-
-type UserStatus = "online" | "offline";
-
-interface ConnectedUser {
-    userId: string;
-    email: string;
-    lastSeen: string;
-    status: UserStatus;
-}
 
 interface SocketContextType {
     socket: Socket | null;
@@ -40,20 +31,11 @@ function SocketProvider({children}: { children: React.ReactNode }) {
         const socket = io("http://localhost:8000");
 
         socket.on("connect", () => {
-            console.log("Connected to server");
             setSocket(socket);
 
             if (user && user.id) {
                 socket.emit("register", {userId: user.id, email: user.email});
             }
-        });
-
-        socket.on("messageFromBack", (message: string) => {
-            console.log("Message from server: ", message);
-        });
-
-        socket.on("connectedUsers", (users: ConnectedUser[]) => {
-            console.log("Connected users: ", users);
         });
 
         return () => {

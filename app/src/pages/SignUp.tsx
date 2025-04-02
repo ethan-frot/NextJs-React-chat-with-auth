@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import AuthForm from '../components/AuthForm';
@@ -15,10 +14,10 @@ export default function SignUp() {
 
   return (
     <AuthForm
-      title="Créer un compte"
-      submitButtonText="S'inscrire"
+      title="Inscrivez-vous sur Slack"
+      submitButtonText="Continuer avec email"
       onSubmit={handleSubmit}
-      redirectText="Déjà inscrit ?"
+      redirectText="Déjà sur Slack ?"
       redirectLinkText="Se connecter"
       redirectTo="/signin"
     />

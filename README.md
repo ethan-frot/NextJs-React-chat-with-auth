@@ -33,7 +33,7 @@ Une application de messagerie instantanée moderne inspirée de Slack, construit
 
 - Node.js (v18+)
 - Docker et Docker Compose
-- npm ou yarn
+- pnpm
 
 ### Installation et lancement
 
@@ -47,10 +47,10 @@ cd api
 docker compose up -d
 
 # Installer les dépendances
-npm install
+pnpm install
 
 # Démarrer le serveur en mode développement
-npm run start:dev
+pnpm start:dev
 ```
 
 #### Frontend
@@ -60,10 +60,10 @@ npm run start:dev
 cd app
 
 # Installer les dépendances
-npm install
+pnpm install
 
 # Démarrer l'application en mode développement
-npm run dev
+pnpm dev
 ```
 
 ## 📊 Base de données
